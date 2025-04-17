@@ -1,0 +1,26 @@
+---
+title: "EDA"
+author: "Sean Fleming, Tomas Gan, Waris Popal"
+date: "2025-04-17"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Exploratory Analysis
+This file explores the housing price data we found off of kaggle.
+https://www.kaggle.com/datasets/jyotsnagurjar/factors-influencing-us-house-prices/data
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
