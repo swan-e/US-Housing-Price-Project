@@ -19,10 +19,18 @@ house_data$DATE <- as.Date(house_data$DATE, format="%Y-%m-%d")
 house_data$DATE <- as.numeric(format(house_data$DATE, format="%Y.%m%d"))
 ```
 
-## Exploratory Analysis
-This file explores the housing price data we found off of kaggle.
+## DataSet
+We are using data from a dataset found off of kaggle.  
 https://www.kaggle.com/datasets/jyotsnagurjar/factors-influencing-us-house-prices/data
 
+```{r data set, echo = FALSE}
+colnames <- data.frame(Column_Names = colnames(house_data))
+colnames$Column_Names <- gsub("_", " ", colnames$Column_Names)
+print(colnames)
+```
+Our initial data set comes with 16 variables. Because we want to analyze the effect of house prices, the home price index is our response variable (rest of the 15 are explanatory). 
+
+## Exploratory Analysis
 ```{r initial plots, echo=FALSE}
 # the plot is too dense and has too many scatter plots
 #plot(house_data, lower.panel=NULL, main="Scatterplot Between All Variables")
@@ -54,10 +62,10 @@ https://www.kaggle.com/datasets/jyotsnagurjar/factors-influencing-us-house-price
 
 
 # this prints out histograms for all the variables
-# par(mfcol = c(4, 4))
-# for (i in 1:ncol(house_data)) {
-#   hist(house_data[[i]], main = colnames(house_data)[i], xlab = "", col = "lightblue")
-# }
+par(mfcol = c(4, 4), mar = c(3, 3, 2, 2))
+for (i in 1:ncol(house_data)) {
+  hist(house_data[[i]], main = colnames(house_data)[i], xlab = "", col = "lightblue")
+}
 ```
 
 ## Including Plots
