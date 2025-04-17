@@ -2,19 +2,62 @@
 title: "EDA"
 author: "Sean Fleming, Tomas Gan, Waris Popal"
 date: "2025-04-17"
-output: html_document
+output: github_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(car)
+library(ggplot2)
+library(GGally)
+
+# Reading in Data
+house_data <- read.csv("US_House_Price.csv")
+
+# Format Cleaning
+house_data$DATE <- as.Date(house_data$DATE, format="%Y-%m-%d")
+house_data$DATE <- as.numeric(format(house_data$DATE, format="%Y.%m%d"))
 ```
 
 ## Exploratory Analysis
 This file explores the housing price data we found off of kaggle.
 https://www.kaggle.com/datasets/jyotsnagurjar/factors-influencing-us-house-prices/data
 
-```{r cars}
-summary(cars)
+```{r initial plots, echo=FALSE}
+# the plot is too dense and has too many scatter plots
+#plot(house_data, lower.panel=NULL, main="Scatterplot Between All Variables")
+
+# pairwise plot based on correlation 
+# good_cor <- list()
+# cor_matrix <- cor(house_data)
+# 
+# rows <- nrow(cor_matrix)
+# cols <- ncol(cor_matrix)
+# for(i in 1:rows){
+#   for(j in i:cols){
+#     if(abs(cor_matrix[i,j]) > 0.85 && i != j){
+#       good_cor[[length(good_cor)+1]] <- list(c(i,j,cor_matrix[i,j]))
+#     }
+#   }
+# }
+# 
+# good_columns <- unique(unlist(lapply(good_cor, function(x) x[1:2])))
+# filtered_data <- house_data[, good_columns]
+# ggpairs(filtered_data, 
+#         upper = list(continuous = wrap("cor", size = 5)), 
+#         lower = list(continuous = "smooth"), 
+#         progress = FALSE) + 
+#   ggtitle("Pairwise Scatterplots with Correlations > 0.85") +
+#   theme(plot.title = element_text(hjust = 0.5))
+
+#ggpairs(house_data, progress=FALSE, main="Pairwise Scatterplots")
+
+
+# this prints out histograms for all the variables
+# par(mfcol = c(4, 4))
+# for (i in 1:ncol(house_data)) {
+#   hist(house_data[[i]], main = colnames(house_data)[i], xlab = "", col = "lightblue")
+# }
 ```
 
 ## Including Plots
