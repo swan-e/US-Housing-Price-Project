@@ -1,0 +1,89 @@
+---
+title: "Exploratory Data Analysis"
+author: "Sean Fleming"
+date: "2025-04-21"
+output:
+  html_document: default
+  pdf_document: default
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(car)
+library(ggplot2)
+library(GGally)
+library(shiny)
+library(tsibble)
+library(dplyr)
+library(rsconnect)
+
+# rsconnect deploy
+# rsconnect::deployApp(
+#   appDir = "C:/Users/seanf/Desktop/Sean's Data Sci Laptop/RStudio Git/US-Housing-Price-Project",
+#   appName = "Exploratory_Data_Analysis",
+#   appMode = "shiny"
+# )
+
+# Reading in Data
+house_data <- read.csv("data/US_House_Price.csv")
+
+# Format Cleaning
+house_data$DATE <- as.Date(house_data$DATE, format="%Y-%m-%d")
+#house_data$DATE <- as.numeric(format(house_data$DATE, format="%Y.%m%d"))
+```
+
+## DataSet
+We are using data from a dataset found off of kaggle.  
+https://www.kaggle.com/datasets/jyotsnagurjar/factors-influencing-us-house-prices/data  
+(this exploratory data analysis document is done using R software)
+```{r data set, echo = FALSE}
+colnames <- data.frame(Column_Names = colnames(house_data))
+colnames$Column_Names <- gsub("_", " ", colnames$Column_Names)
+print(colnames)
+```
+Our initial data set comes with 16 variables. Because we want to analyze the effect of house prices, the home price index is our response variable (rest of the 15 are explanatory). 
+
+Considering the dataset is given over time (from 2003 to 2022), time related statistical methods may be preferred (such as time series or random effect regression). 
+
+## Time Series Plots
+```{r interactive Time Series Plot, echo=FALSE}
+# UI
+ui <- fluidPage(
+  selectInput("var_select", "Choose a variable to plot:", choices = c("house_for_sale_or_sold", "unemployment_rate", "home_price_index")), plotOutput("plot")
+)
+
+server <- function(input, output, session){
+  data_tsibble <- reactive({
+    house_data %>%
+      mutate(Month = yearmonth(DATE)) %>%
+      select(Month, house_for_sale_or_sold, unemployment_rate,home_price_index) %>%
+      as_tsibble(index=Month)
+  })
+  
+  # Render Plot from Shiny
+  output$plot <- renderPlot({
+    req(input$var_select)
+    ggplot(data_tsibble(), aes(x = Month, y = .data[[input$var_select]])) + geom_line(color = "steelblue") + labs(title = paste("Time Series of", input$var_select), y = input$var_select, x = "Month") + theme_minimal()
+  })
+}
+
+shinyApp(ui, server)
+
+
+# ggpairs from the GGally library
+# ggpairs(house_data, progress=FALSE, main="Pairwise Scatterplots")
+```
+
+### Time Series Graph Insights. 
+Looking at the time series graphs, we can develop some interesting insight about the economy of the US. To contextualize, major events in US history that play as inflection points constitute the Great Recession in 2008 and the COVID-19 pandemic in 2019. 
+
+**1. House for sale/sold**  
+The sales of houses has been declining in the period between 2005 and 2010. Given the context of the great recession, it makes sense that the sales of houses wasn't a priority at the time. We could possibly look into this metric and see how it may affect housing prices. 
+
+**2. Unemployment Rates**    
+Unemployment is seen spiking during the two biggest recent recessions (Great and COVID-19). Given the economies state, it makes sense that there is a larger amounts of unemployment. It seems to have died down however since 2021. 
+
+**3. Home Price Index (house prices)**    
+House prices have been steadily increasing since 2012. After COVID, we can notice an even sharper rate of increase in the housing prices to an all time high. This is very different from the response in the 2008 Great Recession where housing prices dropped drastically. We may be able to analyze what factors played a role in these different time periods to lead to different trajectories.  
+
